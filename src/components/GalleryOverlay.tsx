@@ -15,7 +15,8 @@ export default function GalleryOverlay() {
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
-    audioRef.current = new Audio('/music/song.mp3')
+    const base = import.meta.env.BASE_URL || '/'
+    audioRef.current = new Audio(`${base}music/song.mp3`)
     audioRef.current.loop = true
     audioRef.current.volume = 0.4
     return () => {

@@ -9,11 +9,18 @@ export interface MesData {
   fotos?: string[]
 }
 
-/** Devuelve el array de fotos de un mes (fotos o [fotoUrl] o []) */
+const BASE_URL = import.meta.env.BASE_URL || '/'
+
+/** Convierte una ruta de public (ej. /photos/x.jpg) a URL con base para GitHub Pages */
+function withBase(path: string): string {
+  const p = path.startsWith('/') ? path.slice(1) : path
+  return `${BASE_URL}${p}`
+}
+
+/** Devuelve el array de fotos de un mes (fotos o [fotoUrl] o []), con base URL aplicada */
 export function getFotos(mes: MesData): string[] {
-  if (mes.fotos?.length) return mes.fotos
-  if (mes.fotoUrl) return [mes.fotoUrl]
-  return []
+  const raw = mes.fotos?.length ? mes.fotos : mes.fotoUrl ? [mes.fotoUrl] : []
+  return raw.map(withBase)
 }
 
 export const FECHA_INICIO = '2025-02-05'
