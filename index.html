@@ -1,1442 +1,650 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html lang="es" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Para Ti, Mi Amor ❤️</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
-    <style>
-        /* ===== RESET & BASE ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-            overflow-x: hidden;
-        }
-
-        body {
-            font-family: 'Lora', serif;
-            background: #0a0000;
-            color: #fff;
-            overflow-x: hidden;
-            cursor: default;
-        }
-
-        /* ===== CUSTOM CURSOR TRAIL ===== */
-        .cursor-heart {
-            position: fixed;
-            pointer-events: none;
-            font-size: 20px;
-            z-index: 99999;
-            animation: cursorFloat 1.5s ease-out forwards;
-        }
-
-        @keyframes cursorFloat {
-            0% { opacity: 1; transform: translate(0, 0) scale(1) rotate(0deg); }
-            100% { opacity: 0; transform: translate(var(--dx), -80px) scale(0.3) rotate(45deg); }
-        }
-
-        /* ===== PRELOADER / INTRO ===== */
-        #preloader {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: radial-gradient(ellipse at center, #1a0a0a 0%, #0a0000 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            transition: opacity 1s ease, visibility 1s ease;
-        }
-
-        #preloader.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        /* ===== INTRO SIMPLE — TARJETA CLICKEABLE SIN FALLOS ===== */
-        .intro-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            width: 280px;
-            padding: 44px 36px;
-            background: linear-gradient(160deg, #fff5f7 0%, #ffe8ec 100%);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 180, 190, 0.4);
-            box-shadow: 0 20px 50px rgba(120, 30, 50, 0.2);
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .intro-card:hover {
-            transform: scale(1.02);
-            box-shadow: 0 24px 56px rgba(120, 30, 50, 0.25);
-        }
-
-        .intro-card:active {
-            transform: scale(0.98);
-        }
-
-        .intro-card .intro-icon {
-            font-size: 48px;
-            line-height: 1;
-        }
-
-        .intro-card .intro-title {
-            font-family: 'Dancing Script', cursive;
-            font-size: 28px;
-            font-weight: 700;
-            color: #b84a5a;
-            text-align: center;
-            line-height: 1.3;
-        }
-
-        .intro-card .intro-hint {
-            font-size: 13px;
-            color: rgba(120, 60, 70, 0.7);
-            letter-spacing: 1px;
-        }
-
-        .preloader-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-
-        /* ===== FLOATING HEARTS BACKGROUND ===== */
-        .hearts-bg {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            overflow: hidden;
-        }
-
-        .floating-heart {
-            position: absolute;
-            bottom: -50px;
-            font-size: 20px;
-            opacity: 0.15;
-            animation: floatUp linear infinite;
-        }
-
-        @keyframes floatUp {
-            0% {
-                transform: translateY(0) rotate(0deg) scale(1);
-                opacity: 0;
-            }
-            10% { opacity: 0.15; }
-            90% { opacity: 0.15; }
-            100% {
-                transform: translateY(-110vh) rotate(360deg) scale(0.5);
-                opacity: 0;
-            }
-        }
-
-        /* ===== PARTICLE CANVAS ===== */
-        #particles-canvas {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        /* ===== SECTIONS GENERAL ===== */
-        section {
-            position: relative;
-            z-index: 1;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 60px 20px;
-        }
-
-        .fade-in {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
-        }
-
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* ===== SECTION 1: HERO ===== */
-        #hero {
-            background: radial-gradient(ellipse at 50% 30%, rgba(180, 40, 60, 0.15) 0%, transparent 70%);
-            flex-direction: column;
-            text-align: center;
-            padding-top: 100px;
-        }
-
-        .hero-heart-big {
-            font-size: 80px;
-            animation: heartPulse 1.5s ease-in-out infinite;
-            filter: drop-shadow(0 0 30px rgba(255, 80, 100, 0.6));
-            margin-bottom: 30px;
-        }
-
-        .hero-title {
-            font-family: 'Dancing Script', cursive;
-            font-size: clamp(2.5rem, 7vw, 5rem);
-            background: linear-gradient(135deg, #ff6b8a, #ff2d55, #ff6b8a);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: shimmer 3s ease-in-out infinite;
-            line-height: 1.3;
-        }
-
-        @keyframes shimmer {
-            0%, 100% { background-position: 0% center; }
-            50% { background-position: 200% center; }
-        }
-
-        .hero-subtitle {
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            font-size: clamp(1rem, 2.5vw, 1.4rem);
-            color: rgba(255, 200, 210, 0.8);
-            margin-top: 20px;
-            max-width: 600px;
-        }
-
-        .scroll-indicator {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            animation: bounce 2s ease-in-out infinite;
-        }
-
-        .scroll-indicator span {
-            font-size: 12px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: rgba(255,255,255,0.4);
-        }
-
-        .scroll-arrow {
-            width: 24px;
-            height: 24px;
-            border-right: 2px solid rgba(255,255,255,0.4);
-            border-bottom: 2px solid rgba(255,255,255,0.4);
-            transform: rotate(45deg);
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(15px); }
-        }
-
-        /* ===== SECTION 2: LOVE LETTER ===== */
-        #love-letter {
-            background: radial-gradient(ellipse at 50% 50%, rgba(120, 20, 40, 0.08) 0%, transparent 70%);
-            flex-direction: column;
-        }
-
-        .letter-container {
-            max-width: 520px;
-            width: 100%;
-            padding: 20px;
-        }
-
-        /* Marco principal - tarjeta de invitación */
-        .letter-card {
-            position: relative;
-            background: 
-                linear-gradient(145deg, #fdf8f9 0%, #fceef0 50%, #fae8eb 100%);
-            border-radius: 6px;
-            border: 1px solid rgba(180, 100, 110, 0.2);
-            box-shadow: 
-                inset 0 1px 0 rgba(255,255,255,0.9),
-                0 2px 4px rgba(0,0,0,0.04),
-                0 20px 50px rgba(120, 40, 60, 0.2);
-            overflow: visible;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .letter-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 
-                inset 0 1px 0 rgba(255,255,255,0.9),
-                0 2px 4px rgba(0,0,0,0.04),
-                0 30px 70px rgba(120, 40, 60, 0.25);
-        }
-
-        /* Línea decorativa superior */
-        .letter-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, transparent 0%, #d4a5a5 20%, #c97b8a 50%, #d4a5a5 80%, transparent 100%);
-            border-radius: 6px 6px 0 0;
-            opacity: 0.7;
-        }
-
-        /* Sello de cera */
-        .letter-seal {
-            position: absolute;
-            top: -16px;
-            right: 28px;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: 
-                radial-gradient(circle at 35% 35%, #d64545, #a82c2c 60%, #7a2020);
-            box-shadow: 
-                inset 0 -2px 6px rgba(0,0,0,0.35),
-                inset 0 1px 2px rgba(255,200,200,0.3),
-                0 4px 15px rgba(139, 45, 45, 0.4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            z-index: 3;
-            border: 1px solid rgba(80, 20, 20, 0.3);
-        }
-
-        .letter-content {
-            padding: 52px 48px 48px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        .letter-date {
-            font-family: 'Lora', serif;
-            font-size: 0.7rem;
-            color: #8b6369;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            margin-bottom: 20px;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-
-        .letter-date.show {
-            opacity: 1;
-        }
-
-        .letter-heading {
-            font-family: 'Dancing Script', cursive;
-            font-size: 2.8rem;
-            color: #7a3d48;
-            margin-bottom: 28px;
-            font-weight: 700;
-            line-height: 1.2;
-        }
-
-        .letter-body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        .letter-text {
-            font-family: 'Lora', serif;
-            font-size: 1.05rem;
-            line-height: 2.1;
-            color: #3d2a2f;
-            font-style: italic;
-            letter-spacing: 0.3px;
-        }
-
-        .letter-text .line {
-            display: block;
-            opacity: 0;
-            transform: translateY(12px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
-        }
-
-        .letter-text .line.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .letter-text .line.line-space {
-            height: 0.8em;
-            min-height: 20px;
-        }
-
-        .letter-signature {
-            font-family: 'Dancing Script', cursive;
-            font-size: 1.85rem;
-            color: #7a3d48;
-            margin-top: 32px;
-            letter-spacing: 1px;
-            opacity: 0;
-            transition: opacity 0.8s ease 0.4s;
-        }
-
-        .letter-signature.show {
-            opacity: 1;
-        }
-
-        /* Detalle decorativo inferior */
-        .letter-card::after {
-            content: '♥';
-            position: absolute;
-            bottom: 16px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 12px;
-            color: rgba(122, 61, 72, 0.15);
-            letter-spacing: 16px;
-        }
-
-        /* ===== SECTION 3: REASONS ===== */
-        #reasons {
-            background: radial-gradient(ellipse at 50% 50%, rgba(180, 40, 60, 0.08) 0%, transparent 70%);
-            flex-direction: column;
-        }
-
-        .reasons-title {
-            font-family: 'Dancing Script', cursive;
-            font-size: clamp(2rem, 5vw, 3rem);
-            color: #ff6b8a;
-            margin-bottom: 50px;
-            text-align: center;
-        }
-
-        .reasons-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            max-width: 900px;
-            width: 100%;
-        }
-
-        .reason-card {
-            background: linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-            border: 1px solid rgba(255, 107, 138, 0.1);
-            border-radius: 16px;
-            padding: 30px 25px;
-            text-align: center;
-            transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
-            cursor: default;
-            opacity: 0;
-            transform: translateY(30px) scale(0.95);
-        }
-
-        .reason-card.visible {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-
-        .reason-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 50px rgba(255, 45, 85, 0.15);
-            border-color: rgba(255, 107, 138, 0.3);
-        }
-
-        .reason-icon {
-            font-size: 40px;
-            margin-bottom: 15px;
-            display: block;
-        }
-
-        .reason-text {
-            font-family: 'Playfair Display', serif;
-            font-size: 1rem;
-            color: rgba(255, 220, 225, 0.8);
-            line-height: 1.6;
-        }
-
-        /* ===== SECTION 4: TIMELINE ===== */
-        #timeline {
-            background: radial-gradient(ellipse at 50% 50%, rgba(120, 20, 40, 0.1) 0%, transparent 70%);
-            flex-direction: column;
-            padding: 80px 20px;
-        }
-
-        .timeline-title {
-            font-family: 'Dancing Script', cursive;
-            font-size: clamp(2rem, 5vw, 3rem);
-            color: #ff6b8a;
-            margin-bottom: 60px;
-            text-align: center;
-        }
-
-        .timeline-container {
-            position: relative;
-            max-width: 600px;
-            width: 100%;
-        }
-
-        .timeline-line {
-            position: absolute;
-            left: 20px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: linear-gradient(to bottom, transparent, #ff6b8a, transparent);
-        }
-
-        .timeline-item {
-            padding-left: 60px;
-            margin-bottom: 50px;
-            position: relative;
-            opacity: 0;
-            transform: translateX(-20px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
-
-        .timeline-item.visible {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .timeline-dot {
-            position: absolute;
-            left: 12px;
-            top: 5px;
-            width: 18px;
-            height: 18px;
-            background: #ff2d55;
-            border-radius: 50%;
-            border: 3px solid #0a0000;
-            box-shadow: 0 0 15px rgba(255, 45, 85, 0.5);
-        }
-
-        .timeline-date {
-            font-family: 'Dancing Script', cursive;
-            font-size: 1.3rem;
-            color: #ff6b8a;
-            margin-bottom: 8px;
-        }
-
-        .timeline-desc {
-            font-family: 'Lora', serif;
-            font-size: 0.95rem;
-            color: rgba(255, 220, 225, 0.7);
-            line-height: 1.6;
-        }
-
-        /* ===== SECTION 5: THE QUESTION ===== */
-        #question {
-            background: radial-gradient(ellipse at 50% 50%, rgba(180, 40, 60, 0.12) 0%, transparent 70%);
-            flex-direction: column;
-            text-align: center;
-            min-height: 100vh;
-        }
-
-        .question-heart {
-            font-size: 60px;
-            animation: heartPulse 1.2s ease-in-out infinite;
-            filter: drop-shadow(0 0 25px rgba(255, 80, 100, 0.6));
-            margin-bottom: 30px;
-        }
-
-        .question-text {
-            font-family: 'Dancing Script', cursive;
-            font-size: clamp(2rem, 6vw, 3.5rem);
-            background: linear-gradient(135deg, #ff6b8a, #ff2d55, #ff85a2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 15px;
-        }
-
-        .question-sub {
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            font-size: 1.2rem;
-            color: rgba(255, 200, 210, 0.7);
-            margin-bottom: 50px;
-        }
-
-        .buttons-container {
-            display: flex;
-            gap: 30px;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-            position: relative;
-        }
-
-        .btn-yes {
-            padding: 18px 50px;
-            font-family: 'Dancing Script', cursive;
-            font-size: 1.8rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #ff2d55, #e74c6f);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 8px 30px rgba(255, 45, 85, 0.4);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-yes::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-            transform: rotate(45deg);
-            animation: btnShine 3s ease-in-out infinite;
-        }
-
-        @keyframes btnShine {
-            0%, 100% { transform: translateX(-100%) rotate(45deg); }
-            50% { transform: translateX(100%) rotate(45deg); }
-        }
-
-        .btn-yes:hover {
-            transform: scale(1.1);
-            box-shadow: 0 12px 40px rgba(255, 45, 85, 0.6);
-        }
-
-        .btn-no {
-            padding: 14px 35px;
-            font-family: 'Lora', serif;
-            font-size: 1rem;
-            background: transparent;
-            color: rgba(255,255,255,0.4);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        /* ===== CELEBRATION OVERLAY ===== */
-        #celebration {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: radial-gradient(ellipse at center, rgba(10,0,0,0.95), rgba(10,0,0,0.98));
-            z-index: 9999;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 20px;
-        }
-
-        #celebration.active {
-            display: flex;
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .celebration-hearts {
-            font-size: 80px;
-            animation: heartPulse 1s ease-in-out infinite;
-            margin-bottom: 30px;
-        }
-
-        .celebration-text {
-            font-family: 'Dancing Script', cursive;
-            font-size: clamp(2.5rem, 7vw, 4.5rem);
-            background: linear-gradient(135deg, #ff6b8a, #ffb6c1, #ff2d55);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: shimmer 2s ease-in-out infinite;
-            margin-bottom: 20px;
-        }
-
-        .celebration-sub {
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            font-size: 1.3rem;
-            color: rgba(255, 200, 210, 0.8);
-            max-width: 500px;
-            line-height: 1.8;
-        }
-
-        .celebration-confetti {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            overflow: hidden;
-        }
-
-        .confetti-piece {
-            position: absolute;
-            top: -20px;
-            width: 10px;
-            height: 20px;
-            border-radius: 2px;
-            animation: confettiFall linear forwards;
-        }
-
-        @keyframes confettiFall {
-            0% {
-                transform: translateY(0) rotate(0deg) scale(1);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(110vh) rotate(720deg) scale(0.5);
-                opacity: 0;
-            }
-        }
-
-        /* ===== MUSIC TOGGLE ===== */
-        .music-toggle {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: rgba(255, 45, 85, 0.2);
-            border: 1px solid rgba(255, 107, 138, 0.3);
-            color: #ff6b8a;
-            font-size: 22px;
-            cursor: pointer;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .music-toggle:hover {
-            background: rgba(255, 45, 85, 0.4);
-            transform: scale(1.1);
-        }
-
-        .music-toggle.playing .bar {
-            animation: musicBars 0.6s ease-in-out infinite alternate;
-        }
-
-        .music-bars {
-            display: flex;
-            gap: 3px;
-            align-items: flex-end;
-            height: 18px;
-        }
-
-        .bar {
-            width: 3px;
-            background: #ff6b8a;
-            border-radius: 2px;
-            height: 5px;
-            transition: height 0.2s ease;
-        }
-
-        .bar:nth-child(1) { animation-delay: 0s; }
-        .bar:nth-child(2) { animation-delay: 0.15s; }
-        .bar:nth-child(3) { animation-delay: 0.3s; }
-        .bar:nth-child(4) { animation-delay: 0.45s; }
-
-        @keyframes musicBars {
-            0% { height: 5px; }
-            100% { height: 18px; }
-        }
-
-        .music-toggle:not(.playing) .bar {
-            height: 5px !important;
-            animation: none !important;
-        }
-
-        /* ===== SPARKLE EFFECT ===== */
-        .sparkle {
-            position: fixed;
-            pointer-events: none;
-            z-index: 99998;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: #ffb6c1;
-            animation: sparkleAnim 0.8s ease-out forwards;
-        }
-
-        @keyframes sparkleAnim {
-            0% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0; transform: scale(0); }
-        }
-
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 600px) {
-            .intro-card {
-                width: 260px;
-                padding: 36px 28px;
-            }
-            .intro-card .intro-title {
-                font-size: 24px;
-            }
-            .letter-content {
-                padding: 36px 24px 32px;
-            }
-            .letter-heading {
-                font-size: 2.1rem;
-            }
-            .letter-text {
-                font-size: 0.95rem;
-            }
-            .letter-seal {
-                width: 42px;
-                height: 42px;
-                font-size: 20px;
-                right: 20px;
-            }
-            .buttons-container {
-                gap: 20px;
-            }
-            .reason-card {
-                padding: 25px 20px;
-            }
-            .timeline-item {
-                padding-left: 50px;
-            }
-        }
-
-        /* ===== UTILITIES ===== */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Glow divider */
-        .glow-divider {
-            width: 100px;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #ff6b8a, transparent);
-            margin: 20px auto;
-            border-radius: 2px;
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Josué Tueros · Backend Engineer</title>
+  <meta name="description" content="Josué Tueros — Backend Engineer con 6+ años construyendo microservicios .NET en producción. C#, .NET, Event-Driven, Kubernetes. Lima, Perú (abierto a remoto).">
+  <meta property="og:title" content="Josué Tueros · Backend Engineer (.NET)">
+  <meta property="og:description" content="6+ años construyendo y operando microservicios .NET en producción. Event-Driven, Kubernetes, Azure Service Bus, Redis.">
+  <meta property="og:image" content="assets/photo.jpg">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%2310b981'/><text x='50%' y='54%' text-anchor='middle' dominant-baseline='middle' font-family='monospace' font-weight='700' font-size='28' fill='%23052e1f'>JT</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --bg-soft: #111821;
+      --card: #131c27;
+      --border: #1f2b3a;
+      --text: #e6edf3;
+      --muted: #8b9bb0;
+      --accent: #10b981;
+      --accent-2: #38bdf8;
+      --accent-soft: rgba(16, 185, 129, .12);
+      --shadow: 0 10px 30px rgba(0, 0, 0, .35);
+      --radius: 14px;
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+      --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    [data-theme="light"] {
+      --bg: #f7f9fb;
+      --bg-soft: #eef2f6;
+      --card: #ffffff;
+      --border: #dde4ec;
+      --text: #0f1720;
+      --muted: #566577;
+      --accent: #059669;
+      --accent-2: #0284c7;
+      --accent-soft: rgba(5, 150, 105, .1);
+      --shadow: 0 10px 30px rgba(15, 23, 32, .08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      transition: background .3s, color .3s;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    /* Idioma: se muestra solo el bloque del idioma activo */
+    html[lang="es"] body [lang="en"],
+    html[lang="en"] body [lang="es"] { display: none !important; }
+
+    .container { width: min(1080px, 100% - 32px); margin-inline: auto; }
+
+    /* ---------- Nav ---------- */
+    nav {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: blur(12px);
+      background: color-mix(in srgb, var(--bg) 80%, transparent);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 16px; }
+    .logo { font-family: var(--mono); font-weight: 600; color: var(--accent); }
+    .logo span { color: var(--muted); }
+    .nav-links { display: flex; gap: 22px; font-size: .92rem; color: var(--muted); }
+    .nav-links a:hover { color: var(--text); }
+    .nav-actions { display: flex; gap: 8px; }
+    .icon-btn {
+      height: 36px; min-width: 36px; padding: 0 10px;
+      border-radius: 10px; border: 1px solid var(--border);
+      background: var(--card); color: var(--text);
+      font: 600 .8rem var(--mono); cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: border-color .2s, transform .2s;
+    }
+    .icon-btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+    .icon-btn svg { width: 16px; height: 16px; }
+
+    /* ---------- Hero ---------- */
+    .hero { padding: 88px 0 64px; position: relative; overflow: hidden; }
+    .hero::before {
+      content: ""; position: absolute; inset: -40% -10% auto auto; width: 620px; height: 620px;
+      background: radial-gradient(circle, var(--accent-soft), transparent 65%);
+      pointer-events: none;
+    }
+    .hero-grid { display: grid; grid-template-columns: 1fr auto; gap: 48px; align-items: center; position: relative; }
+    .status {
+      display: inline-flex; align-items: center; gap: 8px;
+      font: 500 .82rem var(--mono); color: var(--accent);
+      background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+      padding: 6px 12px; border-radius: 999px; margin-bottom: 22px;
+    }
+    .status::before {
+      content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--accent);
+      box-shadow: 0 0 0 0 var(--accent); animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 70%, transparent); }
+      70% { box-shadow: 0 0 0 10px transparent; }
+      100% { box-shadow: 0 0 0 0 transparent; }
+    }
+    h1 { font-size: clamp(2.4rem, 6vw, 4rem); line-height: 1.05; letter-spacing: -.03em; font-weight: 800; }
+    .role {
+      font: 500 clamp(1rem, 2.4vw, 1.25rem) var(--mono); color: var(--accent-2);
+      margin: 14px 0 20px; min-height: 1.6em;
+    }
+    .role .caret { display: inline-block; width: 10px; background: var(--accent-2); animation: blink 1s steps(1) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+    .hero p.lead { font-size: 1.1rem; color: var(--muted); max-width: 620px; }
+    .hero p.lead strong { color: var(--text); font-weight: 600; }
+    .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 20px; border-radius: 10px; font-weight: 600; font-size: .95rem;
+      border: 1px solid var(--border); background: var(--card);
+      transition: transform .2s, border-color .2s, background .2s;
+    }
+    .btn:hover { transform: translateY(-2px); border-color: var(--accent); }
+    .btn.primary { background: var(--accent); color: #04130d; border-color: var(--accent); }
+    .btn.primary:hover { filter: brightness(1.08); }
+    .btn svg { width: 18px; height: 18px; }
+    .avatar {
+      width: 220px; height: 220px; border-radius: 28px; object-fit: cover;
+      border: 1px solid var(--border); box-shadow: var(--shadow);
+      outline: 2px solid var(--accent); outline-offset: 8px;
+    }
+
+    /* ---------- Stats ---------- */
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 64px; }
+    .stat {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 20px;
+    }
+    .stat b { display: block; font: 700 1.9rem var(--mono); color: var(--accent); letter-spacing: -.02em; }
+    .stat span { font-size: .88rem; color: var(--muted); }
+
+    /* ---------- Sections ---------- */
+    section { padding: 72px 0; }
+    .section-head { margin-bottom: 36px; }
+    .eyebrow { font: 500 .85rem var(--mono); color: var(--accent); }
+    h2 { font-size: clamp(1.7rem, 3.5vw, 2.3rem); letter-spacing: -.02em; margin-top: 6px; }
+    .section-head p { color: var(--muted); margin-top: 8px; max-width: 640px; }
+
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 26px; transition: border-color .25s, transform .25s, box-shadow .25s;
+    }
+    .card:hover { border-color: color-mix(in srgb, var(--accent) 50%, var(--border)); box-shadow: var(--shadow); }
+
+    /* Highlights */
+    .highlights { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .highlight .ico {
+      width: 42px; height: 42px; border-radius: 10px; display: grid; place-items: center;
+      background: var(--accent-soft); color: var(--accent); margin-bottom: 16px;
+    }
+    .highlight .ico svg { width: 22px; height: 22px; }
+    .highlight h3 { font-size: 1.05rem; margin-bottom: 6px; }
+    .highlight p { color: var(--muted); font-size: .95rem; }
+
+    /* Timeline */
+    .timeline { position: relative; padding-left: 28px; }
+    .timeline::before {
+      content: ""; position: absolute; left: 6px; top: 8px; bottom: 8px; width: 2px;
+      background: linear-gradient(var(--accent), var(--accent-2), transparent);
+    }
+    .job { position: relative; margin-bottom: 20px; }
+    .job::before {
+      content: ""; position: absolute; left: -28px; top: 30px; width: 14px; height: 14px; border-radius: 50%;
+      background: var(--bg); border: 3px solid var(--accent);
+    }
+    .job-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+    .job h3 { font-size: 1.15rem; }
+    .job .company { color: var(--accent); }
+    .date { font: 500 .85rem var(--mono); color: var(--muted); white-space: nowrap; }
+    .job ul { margin-top: 12px; padding-left: 18px; color: var(--muted); }
+    .job li { margin: 6px 0; }
+    .job li::marker { color: var(--accent); }
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .tag {
+      font: 500 .78rem var(--mono); padding: 4px 10px; border-radius: 999px;
+      background: var(--bg-soft); border: 1px solid var(--border); color: var(--text);
+    }
+
+    /* Projects */
+    .projects { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .project { display: flex; flex-direction: column; }
+    .project-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 4px; }
+    .project h3 { font-size: 1.3rem; }
+    .project .sub { color: var(--accent-2); font: 500 .88rem var(--mono); margin-bottom: 14px; }
+    .project ul { padding-left: 18px; color: var(--muted); flex: 1; }
+    .project li { margin: 6px 0; }
+    .project li::marker { color: var(--accent); }
+    .live {
+      font: 600 .75rem var(--mono); color: var(--accent);
+      border: 1px solid var(--accent); border-radius: 999px; padding: 3px 10px; white-space: nowrap;
+    }
+    .live:hover { background: var(--accent-soft); }
+
+    /* Skills */
+    .skills { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .skill-group h3 { font: 600 .9rem var(--mono); color: var(--accent); margin-bottom: 12px; }
+
+    /* Extra */
+    .extra { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .extra h3 { font: 600 .9rem var(--mono); color: var(--accent); margin-bottom: 10px; }
+    .extra p { color: var(--muted); }
+    .extra p strong { color: var(--text); display: block; }
+    .badge-progress {
+      display: inline-block; margin-top: 10px; font: 600 .75rem var(--mono);
+      color: #f59e0b; border: 1px solid #f59e0b55; background: #f59e0b14; padding: 3px 10px; border-radius: 999px;
+    }
+
+    /* Contact */
+    .contact {
+      text-align: center; padding: 56px 28px;
+      background: radial-gradient(circle at top, var(--accent-soft), transparent 70%), var(--card);
+    }
+    .contact h2 { margin-bottom: 10px; }
+    .contact p { color: var(--muted); max-width: 540px; margin: 0 auto; }
+    .contact .cta { justify-content: center; }
+
+    footer { padding: 32px 0 48px; text-align: center; color: var(--muted); font: .85rem var(--mono); }
+
+    /* Reveal on scroll */
+    .js .reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
+    .js .reveal.visible { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .js .reveal { opacity: 1; transform: none; transition: none; }
+      html { scroll-behavior: auto; }
+      .status::before, .role .caret { animation: none; }
+    }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 860px) {
+      .nav-links { display: none; }
+      .hero { padding-top: 56px; }
+      .hero-grid { grid-template-columns: 1fr; gap: 32px; }
+      .avatar { width: 140px; height: 140px; border-radius: 22px; order: -1; outline-offset: 5px; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .highlights, .projects, .skills, .extra { grid-template-columns: 1fr; }
+    }
+    @media print {
+      nav, .cta, .hero::before { display: none; }
+      .js .reveal { opacity: 1; transform: none; }
+    }
+  </style>
 </head>
 <body>
 
-    <!-- PRELOADER / INTRO -->
-    <div id="preloader">
-        <div class="preloader-content">
-            <div class="intro-card" id="envelope" onclick="openEnvelope()">
-                <span class="intro-icon">💌</span>
-                <p class="intro-title">Tienes un mensaje especial</p>
-                <span class="intro-hint">Toca aquí para abrirlo</span>
-            </div>
-        </div>
+  <nav>
+    <div class="container nav-inner">
+      <a href="#top" class="logo">josue<span>.tueros()</span></a>
+      <div class="nav-links">
+        <a href="#about"><span lang="es">Perfil</span><span lang="en">About</span></a>
+        <a href="#experience"><span lang="es">Experiencia</span><span lang="en">Experience</span></a>
+        <a href="#projects"><span lang="es">Proyectos</span><span lang="en">Projects</span></a>
+        <a href="#skills">Skills</a>
+        <a href="#contact"><span lang="es">Contacto</span><span lang="en">Contact</span></a>
+      </div>
+      <div class="nav-actions">
+        <button class="icon-btn" id="langToggle" aria-label="Cambiar idioma / Switch language">EN</button>
+        <button class="icon-btn" id="themeToggle" aria-label="Cambiar tema / Toggle theme">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
     </div>
+  </nav>
 
-    <!-- PARTICLES CANVAS -->
-    <canvas id="particles-canvas"></canvas>
-
-    <!-- FLOATING HEARTS BACKGROUND -->
-    <div class="hearts-bg" id="hearts-bg"></div>
-
-    <!-- MUSIC TOGGLE -->
-    <button class="music-toggle" id="musicToggle" onclick="toggleMusic()" title="Música">
-        <div class="music-bars">
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
+  <header class="hero" id="top">
+    <div class="container">
+      <div class="hero-grid">
+        <div>
+          <div class="status">
+            <span lang="es">Lima, Perú · Abierto a remoto</span>
+            <span lang="en">Lima, Peru · Open to remote</span>
+          </div>
+          <h1>Josué Tueros</h1>
+          <div class="role"><span id="typed"></span><span class="caret">&nbsp;</span></div>
+          <p class="lead" lang="es">
+            Ingeniero Backend con <strong>más de 6 años</strong> construyendo y operando <strong>microservicios .NET en producción</strong>.
+            Arquitecturas orientadas a eventos, releases sin downtime en Kubernetes y trato directo con clientes para convertir
+            requerimientos de negocio en sistemas mantenibles y bien probados.
+          </p>
+          <p class="lead" lang="en">
+            Backend Engineer with <strong>6+ years</strong> building and operating <strong>.NET microservices in production</strong>.
+            Event-driven architectures, zero-downtime releases on Kubernetes, and hands-on client work turning business
+            requirements into maintainable, well-tested systems.
+          </p>
+          <div class="cta">
+            <a class="btn primary" href="assets/Josue_Tueros_CV_ES.pdf" download lang="es">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Descargar CV
+            </a>
+            <a class="btn primary" href="assets/Josue_Tueros_CV_EN.pdf" download lang="en">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download CV
+            </a>
+            <a class="btn" href="https://www.linkedin.com/in/josue-tueros" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+              LinkedIn
+            </a>
+            <a class="btn" href="https://github.com/Jackss0" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 0-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.3-3.1-.2-.4-.6-1.6 0-3.2 0 0 1-.3 3.4 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.8.1 3.2.8.8 1.3 1.9 1.3 3.1 0 4.6-2.8 5.6-5.5 5.9.5.4.9 1.1.9 2.2v3.3c0 .3.1.7.8.6A12 12 0 0 0 12 .3"/></svg>
+              GitHub
+            </a>
+          </div>
         </div>
-    </button>
+        <img class="avatar" src="assets/photo.jpg" alt="Josué Tueros" width="220" height="220">
+      </div>
 
-    <!-- AUDIO (Royalty-free romantic piano placeholder - uses Web Audio API) -->
-    <audio id="bgMusic" loop preload="auto">
-        <!-- You can replace this with your own romantic song -->
-        <source src="music.mp3" type="audio/mpeg">
-    </audio>
-
-    <!-- ===== SECTION 1: HERO ===== -->
-    <section id="hero">
-        <div class="fade-in">
-            <div class="hero-heart-big">💕</div>
-            <h1 class="hero-title">Este San Valentín<br>es para ti</h1>
-            <div class="glow-divider"></div>
-            <p class="hero-subtitle">Porque cada momento a tu lado es un regalo (aunque a veces te salga lo renegona 😏)</p>
-        </div>
-        <div class="scroll-indicator">
-            <span>Desliza</span>
-            <div class="scroll-arrow"></div>
-        </div>
-    </section>
-
-    <!-- ===== SECTION 2: LOVE LETTER ===== -->
-    <section id="love-letter">
-        <div class="letter-container fade-in">
-            <article class="letter-card">
-                <div class="letter-seal">♥</div>
-                <div class="letter-content">
-                    <time class="letter-date" id="letterDate">14 de Febrero, 2026</time>
-                    <h2 class="letter-heading">Miaumorcitoo 💕</h2>
-                    <div class="letter-body">
-                        <div class="letter-text" id="letterText">
-                            <span class="line">Mi princesa, mi chiquita, mi renegoncita favorita:</span>
-                            <span class="line">Este sera nuestro segundo san valentin juntitos</span>
-                            <span class="line line-space"></span>
-                            <span class="line">y solo queiero  decirte cuanto feliz soy cuando te tengo conmigo,</span>
-                            <span class="line">te amo y te adoro con todo. En serio. 💗</span>
-                            <span class="line line-space"></span>
-                            <span class="line">Adoro tu sonrisa, tu forma de ser, todo de ti,</span>
-                            <span class="line">hasta como me miras feo xd,</span>
-                            <span class="line">hasta me soportas cuando soy muy pesado</span>
-                            <span class="line line-space"></span>
-                            <span class="line">Gracias por ser tú: mi amor, mi todo y mi renegona consentida. Te amo. ♡</span>
-                        </div>
-                        <p class="letter-signature" id="letterSignature">
-                            Con todo mi amor, de tu chiquito Josue.
-                        </p>
-                    </div>
-                </div>
-            </article>
-        </div>
-    </section>
-
-    <!-- ===== SECTION 3: REASONS ===== -->
-    <section id="reasons">
-        <div class="fade-in" style="width:100%; max-width:900px;">
-            <h2 class="reasons-title">Razones por las que te amo</h2>
-            <div class="reasons-grid">
-                <div class="reason-card">
-                    <span class="reason-icon">✨</span>
-                    <p class="reason-text">Poque si</p>
-                </div>
-                <div class="reason-card">
-                    <span class="reason-icon">😤</span>
-                    <p class="reason-text">Cuando se te acaba la paciencia y aun así te amo con todo</p>
-                </div>
-                <div class="reason-card">
-                    <span class="reason-icon">🤗</span>
-                    <p class="reason-text">Porque adoro cuando estamos abrazaditos solos to y yo</p>
-                </div>
-                <div class="reason-card">
-                    <span class="reason-icon">😂</span>
-                    <p class="reason-text">Porque nos reimos de cada estupides juntos</p>
-                </div>
-                <div class="reason-card">
-                    <span class="reason-icon">👑</span>
-                    <p class="reason-text">Porque eres mi princesa, mi chiquita y mi todo</p>
-                </div>
-                <div class="reason-card">
-                    <span class="reason-icon">💖</span>
-                    <p class="reason-text">Porque cada cosa que compartimos, ya sea la cosa mas pequeña, es especial para mi</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ===== SECTION 4: TIMELINE ===== -->
-    <section id="timeline">
-        <h2 class="timeline-title fade-in">Nuestros Momentos</h2>
-        <div class="timeline-container">
-            <div class="timeline-line"></div>
-            <div class="timeline-item">
-                <div class="timeline-dot"></div>
-                <div class="timeline-date">El día que te conocí</div>
-                <div class="timeline-desc">Desde ese dia supe que estariamos juntos y para siempre:3</div>
-            </div>
-            <div class="timeline-item">
-                <div class="timeline-dot"></div>
-                <div class="timeline-date">Nuestra primera conversación</div>
-                <div class="timeline-desc">Literalmente hablando por horas, 12 para ser precisosxd. Quien en su primera salida esta afuera asi y jugando</div>
-            </div>
-            <div class="timeline-item">
-                <div class="timeline-dot"></div>
-                <div class="timeline-date">Cuando supe que te amaba</div>
-                <div class="timeline-desc">Ese dia no sabia que me iba a caer tan fuerte por ti, pero supe que te amaba desde el primer momento.</div>
-            </div>
-            <div class="timeline-item">
-                <div class="timeline-dot"></div>
-                <div class="timeline-date">Hoy — San Valentín 2026</div>
-                <div class="timeline-desc">Y aquí estamos, un año juntos en nuestro segundo San Valentin. 💕</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ===== SECTION 5: THE QUESTION ===== -->
-    <section id="question">
-        <div class="fade-in">
-            <div class="question-heart">💝</div>
-            <h2 class="question-text">¿Quieres ser mi Valentín?</h2>
-            <p class="question-sub">Prometo portarme bien :3</p>
-            <div class="buttons-container">
-                <button class="btn-yes" id="btnYes" onclick="sayYes()">¡Sí, quiero! 💕</button>
-                <button class="btn-no" id="btnNo">No estoy segura...</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- ===== CELEBRATION OVERLAY ===== -->
-    <div id="celebration">
-        <div class="celebration-confetti" id="confettiContainer"></div>
-        <div class="celebration-hearts">💕💖💕</div>
-        <h2 class="celebration-text">¡Sabía que dirías que sí, mi princesa! Wejejeje</h2>
-        <div class="glow-divider" style="margin: 20px auto 25px;"></div>
-        <p class="celebration-sub">
-            Asi que prepararte que el 14 nos vamos ala feria y comeremos rico juntitos.
-            <br><br>
-            Te amo y te adoro, renegona linda. Asi que por ultimo me das bechito? :3
-            <br>
-            Tu chiquito, hoy y siempre. ♡
-        </p>
+      <div class="stats">
+        <div class="stat reveal"><b>6+</b><span lang="es">años en backend .NET</span><span lang="en">years in .NET backend</span></div>
+        <div class="stat reveal"><b>0</b><span lang="es">downtime en releases quincenales</span><span lang="en">downtime on bi-weekly releases</span></div>
+        <div class="stat reveal"><b>2</b><span lang="es">productos propios en producción</span><span lang="en">own products in production</span></div>
+        <div class="stat reveal"><b>B2</b><span lang="es">inglés · español nativo</span><span lang="en">English · native Spanish</span></div>
+      </div>
     </div>
+  </header>
 
-    <script>
-        // ===== PRELOADER / ENVELOPE =====
-        let envelopeOpened = false;
+  <!-- ---------- Perfil ---------- -->
+  <section id="about">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="eyebrow">// <span lang="es">perfil</span><span lang="en">about</span></div>
+        <h2><span lang="es">Lo que aporto a un equipo</span><span lang="en">What I bring to a team</span></h2>
+      </div>
+      <div class="highlights">
+        <div class="card highlight reveal">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="8" height="8" rx="2"/><rect x="14" y="2" width="8" height="8" rx="2"/><rect x="8" y="14" width="8" height="8" rx="2"/><path d="M6 10v2a2 2 0 0 0 2 2h0M18 10v2a2 2 0 0 1-2 2h0"/></svg></div>
+          <h3><span lang="es">Microservicios y eventos</span><span lang="en">Microservices & events</span></h3>
+          <p lang="es">Diseño y mantengo servicios .NET que se comunican por mensajería (Azure Service Bus, Redis), con Clean Architecture, SOLID y DDD.</p>
+          <p lang="en">I design and maintain .NET services that communicate through messaging (Azure Service Bus, Redis), applying Clean Architecture, SOLID and DDD.</p>
+        </div>
+        <div class="card highlight reveal">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+          <h3><span lang="es">Producción sin miedo</span><span lang="en">Production-ready</span></h3>
+          <p lang="es">Releases sin downtime con Docker, Kubernetes, Helm y Octopus Deploy, y análisis de causa raíz de incidencias con Splunk y SQL Server.</p>
+          <p lang="en">Zero-downtime releases with Docker, Kubernetes, Helm and Octopus Deploy, plus root cause analysis of incidents with Splunk and SQL Server.</p>
+        </div>
+        <div class="card highlight reveal">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <h3><span lang="es">Cliente y equipo</span><span lang="en">Client & team</span></h3>
+          <p lang="es">Lidero reuniones de requerimientos con clientes, estimo y diseño soluciones, y enseño: dicto sesiones técnicas y clases internas.</p>
+          <p lang="en">I lead requirement meetings with clients, estimate and design solutions, and teach: internal tech talks and training classes.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        function openEnvelope() {
-            if (envelopeOpened) return;
-            envelopeOpened = true;
-            const envelope = document.getElementById('envelope');
-            envelope.classList.add('open');
-            
-            setTimeout(() => {
-                document.getElementById('preloader').classList.add('hidden');
-                startParticles();
-                createFloatingHearts();
-            }, 1200);
-        }
+  <!-- ---------- Experiencia ---------- -->
+  <section id="experience">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="eyebrow">// <span lang="es">experiencia</span><span lang="en">experience</span></div>
+        <h2><span lang="es">Trayectoria profesional</span><span lang="en">Career path</span></h2>
+      </div>
 
-        // ===== FLOATING HEARTS BACKGROUND =====
-        function createFloatingHearts() {
-            const container = document.getElementById('hearts-bg');
-            const hearts = ['❤', '💕', '♡', '💗', '♥', '💖'];
-            
-            for (let i = 0; i < 25; i++) {
-                setTimeout(() => {
-                    createSingleHeart(container, hearts);
-                }, i * 400);
-            }
+      <div class="timeline">
+        <article class="card job reveal">
+          <div class="job-head">
+            <h3><span lang="es">Desarrollador Backend (.NET)</span><span lang="en">Backend Developer (.NET)</span> · <span class="company">Jalasoft</span></h3>
+            <span class="date">2024 — 2026</span>
+          </div>
+          <ul lang="es">
+            <li>Diseñé y construí aplicaciones backend y librerías (DLLs) .NET a medida a partir de requerimientos complejos de clientes, desde el análisis hasta el release.</li>
+            <li>Lideré reuniones de requerimientos y seguimiento directamente con clientes, traduciendo necesidades de negocio en diseños técnicos y estimaciones.</li>
+            <li>Contribuí al diseño de microservicios y me encargué de despliegues on-premise, participando en los ciclos de pruebas y releases.</li>
+            <li>Implementé logging multinivel que permitió rastrear y depurar más rápido las incidencias en producción.</li>
+            <li>Construí plantillas de proyecto reutilizables para estandarizar la creación de servicios y las prácticas de desarrollo.</li>
+            <li>Dicté sesiones internas de knowledge-sharing (STK) y clases técnicas del programa de formación de la empresa, y aporté materiales de curso.</li>
+            <li>Integré el desarrollo asistido por IA (Cursor, Claude) al trabajo diario para acelerar las entregas manteniendo la calidad del código.</li>
+          </ul>
+          <ul lang="en">
+            <li>Designed and built custom .NET backend applications and libraries (DLLs) from complex client requirements, from analysis to release.</li>
+            <li>Led requirement and follow-up meetings directly with clients, translating business needs into technical designs and estimates.</li>
+            <li>Contributed to microservices design and handled on-premise deployments, taking part in testing and release cycles.</li>
+            <li>Implemented multi-level logging that made production issues faster to trace and debug.</li>
+            <li>Built reusable project templates to standardize service setup and development practices.</li>
+            <li>Delivered internal knowledge-sharing sessions (STK) and technical classes for the company's training program, and contributed course materials.</li>
+            <li>Integrated AI-assisted development (Cursor, Claude) into daily work to speed up delivery while keeping code quality.</li>
+          </ul>
+          <div class="tags"><span class="tag">C#</span><span class="tag">.NET</span><span class="tag">Microservices</span><span class="tag">Serilog</span><span class="tag">On-premise</span><span class="tag">AI tooling</span></div>
+        </article>
 
-            setInterval(() => {
-                createSingleHeart(container, hearts);
-            }, 2000);
-        }
+        <article class="card job reveal">
+          <div class="job-head">
+            <h3><span lang="es">Desarrollador Backend (.NET &amp; TypeScript)</span><span lang="en">Backend Developer (.NET &amp; TypeScript)</span> · <span class="company">Jalasoft</span></h3>
+            <span class="date">2023 — 2024</span>
+          </div>
+          <ul lang="es">
+            <li>Construí servicios backend y procesos de automatización en .NET y TypeScript.</li>
+            <li>Mejoré los flujos de trabajo del equipo y la documentación técnica.</li>
+            <li>Corregí bugs en producción, mejoré los procesos de seguimiento de incidencias y participé en planificación y estimación de sprints.</li>
+          </ul>
+          <ul lang="en">
+            <li>Built backend services and automation processes in .NET and TypeScript.</li>
+            <li>Improved team workflows and technical documentation.</li>
+            <li>Fixed production bugs, improved issue-tracking processes and took part in sprint planning and estimation.</li>
+          </ul>
+          <div class="tags"><span class="tag">.NET</span><span class="tag">TypeScript</span><span class="tag">Node.js</span><span class="tag">Scrum</span></div>
+        </article>
 
-        function createSingleHeart(container, hearts) {
-            const heart = document.createElement('div');
-            heart.className = 'floating-heart';
-            heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
-            heart.style.left = Math.random() * 100 + '%';
-            heart.style.fontSize = (15 + Math.random() * 20) + 'px';
-            heart.style.animationDuration = (8 + Math.random() * 12) + 's';
-            heart.style.animationDelay = Math.random() * 2 + 's';
-            container.appendChild(heart);
+        <article class="card job reveal">
+          <div class="job-head">
+            <h3><span lang="es">Desarrollador Backend (.NET)</span><span lang="en">Backend Developer (.NET)</span> · <span class="company">Tranzact</span></h3>
+            <span class="date">2019 — 2022</span>
+          </div>
+          <ul lang="es">
+            <li>Responsable de los despliegues y releases quincenales a producción sin downtime con Docker, Kubernetes, Helm y Octopus Deploy.</li>
+            <li>Desarrollé y mantuve microservicios .NET Core con APIs REST y comunicación por mensajería orientada a eventos.</li>
+            <li>Investigué y resolví incidencias en producción con Splunk y SQL Server, con análisis de causa raíz y soluciones de largo plazo.</li>
+            <li>Monitoreé y validé producción después de cada release para asegurar confiabilidad y rendimiento.</li>
+          </ul>
+          <ul lang="en">
+            <li>Owned deployment processes and bi-weekly production releases with zero downtime using Docker, Kubernetes, Helm and Octopus Deploy.</li>
+            <li>Developed and maintained .NET Core microservices exposing REST APIs and communicating through event-driven messaging.</li>
+            <li>Investigated and resolved production incidents with Splunk and SQL Server, performing root cause analysis and delivering long-term fixes.</li>
+            <li>Monitored and validated production after every release to ensure reliability and performance.</li>
+          </ul>
+          <div class="tags"><span class="tag">.NET Core</span><span class="tag">Kubernetes</span><span class="tag">Helm</span><span class="tag">Octopus Deploy</span><span class="tag">Splunk</span><span class="tag">SQL Server</span></div>
+        </article>
+      </div>
+    </div>
+  </section>
 
-            setTimeout(() => {
-                heart.remove();
-            }, 22000);
-        }
+  <!-- ---------- Proyectos ---------- -->
+  <section id="projects">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="eyebrow">// <span lang="es">proyectos</span><span lang="en">projects</span></div>
+        <h2><span lang="es">Productos que construí y opero</span><span lang="en">Products I built and run</span></h2>
+        <p lang="es">Proyectos propios, en producción, de punta a punta: arquitectura, datos, despliegue y operación.</p>
+        <p lang="en">Side products running in production, end to end: architecture, data, deployment and operations.</p>
+      </div>
 
-        // ===== PARTICLES CANVAS =====
-        const canvas = document.getElementById('particles-canvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-        let animationRunning = false;
+      <div class="projects">
+        <article class="card project reveal">
+          <div class="project-top">
+            <h3>PokeLances</h3>
+            <a class="live" href="https://pokelances.com" target="_blank" rel="noopener">● pokelances.com ↗</a>
+          </div>
+          <div class="sub"><span lang="es">Marketplace TCG en tiempo real</span><span lang="en">Real-time TCG marketplace</span></div>
+          <ul lang="es">
+            <li>Marketplace en producción con subastas en vivo y programadas, ofertas y contraofertas, notificaciones push y pagos locales.</li>
+            <li>Pipelines batch que ingieren a diario datos de productos TCG para historial de precios, precios de mercado por snapshots y gráficos de tendencia.</li>
+            <li>Dashboard financiero para tiendas (gastos, ganancias y pérdidas, métricas clave) integrado con las transacciones.</li>
+            <li>Latencia reducida entre regiones con el proxy de Cloudflare; Redis para caché y datos en tiempo real.</li>
+          </ul>
+          <ul lang="en">
+            <li>Production marketplace with live and scheduled auctions, offers and counteroffers, push notifications and local payment methods.</li>
+            <li>Batch pipelines ingesting daily TCG product data to power price history, snapshot-based market prices and trend charts.</li>
+            <li>Financial dashboard for stores (expenses, P&amp;L, key metrics) integrated with marketplace transactions.</li>
+            <li>Reduced cross-region latency by routing traffic through Cloudflare's proxy; Redis for caching and real-time data.</li>
+          </ul>
+          <div class="tags"><span class="tag">Node.js</span><span class="tag">React</span><span class="tag">PostgreSQL</span><span class="tag">Redis</span><span class="tag">Socket.IO</span><span class="tag">Cloudflare</span></div>
+        </article>
 
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
+        <article class="card project reveal">
+          <div class="project-top">
+            <h3>StockWatch PE</h3>
+          </div>
+          <div class="sub"><span lang="es">Monitor de stock en retail</span><span lang="en">Retail stock monitor</span></div>
+          <ul lang="es">
+            <li>Worker service en .NET 10 que monitorea tiendas online peruanas sobre 5 plataformas de e-commerce (VTEX, Shopify, Magento GraphQL, Next.js, sitemaps).</li>
+            <li>Arquitectura de adaptadores por tienda, clientes HTTP resilientes, persistencia con EF Core, logging estructurado y pruebas unitarias.</li>
+            <li>Alertas en tiempo real a Discord (precio, idioma, vendedor, imagen) y checkout confirmado por una persona con Playwright.</li>
+          </ul>
+          <ul lang="en">
+            <li>.NET 10 worker service monitoring Peruvian online retailers across 5 e-commerce platforms (VTEX, Shopify, Magento GraphQL, Next.js, sitemaps).</li>
+            <li>Pluggable store-adapter architecture with resilient HTTP clients, EF Core persistence, structured logging and unit tests.</li>
+            <li>Real-time Discord alerts (price, language, seller, image) and a human-confirmed checkout prepared with Playwright.</li>
+          </ul>
+          <div class="tags"><span class="tag">C#</span><span class="tag">.NET 10</span><span class="tag">EF Core</span><span class="tag">Serilog</span><span class="tag">xUnit</span><span class="tag">Playwright</span><span class="tag">Docker</span></div>
+        </article>
+      </div>
+    </div>
+  </section>
 
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
+  <!-- ---------- Skills ---------- -->
+  <section id="skills">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="eyebrow">// skills</div>
+        <h2><span lang="es">Stack técnico</span><span lang="en">Tech stack</span></h2>
+      </div>
+      <div class="skills">
+        <div class="card skill-group reveal">
+          <h3>Backend</h3>
+          <div class="tags"><span class="tag">C#</span><span class="tag">.NET 8/10</span><span class="tag">ASP.NET Core</span><span class="tag">Entity Framework Core</span><span class="tag">REST APIs</span><span class="tag">Node.js</span><span class="tag">TypeScript</span></div>
+        </div>
+        <div class="card skill-group reveal">
+          <h3><span lang="es">Arquitectura</span><span lang="en">Architecture</span></h3>
+          <div class="tags"><span class="tag">Microservices</span><span class="tag">Event-Driven</span><span class="tag">Clean Architecture</span><span class="tag">SOLID</span><span class="tag">DDD</span></div>
+        </div>
+        <div class="card skill-group reveal">
+          <h3><span lang="es">Mensajería y tiempo real</span><span lang="en">Messaging & real-time</span></h3>
+          <div class="tags"><span class="tag">Azure Service Bus</span><span class="tag">Redis</span><span class="tag">Socket.IO</span></div>
+        </div>
+        <div class="card skill-group reveal">
+          <h3><span lang="es">Bases de datos</span><span lang="en">Databases</span></h3>
+          <div class="tags"><span class="tag">SQL Server</span><span class="tag">PostgreSQL</span><span class="tag">SQLite</span></div>
+        </div>
+        <div class="card skill-group reveal">
+          <h3>DevOps & Cloud</h3>
+          <div class="tags"><span class="tag">Docker</span><span class="tag">Kubernetes</span><span class="tag">Helm</span><span class="tag">Octopus Deploy</span><span class="tag">CI/CD</span><span class="tag">AWS</span><span class="tag">Azure</span></div>
+        </div>
+        <div class="card skill-group reveal">
+          <h3><span lang="es">Observabilidad y testing</span><span lang="en">Observability & testing</span></h3>
+          <div class="tags"><span class="tag">Splunk</span><span class="tag">Serilog</span><span class="tag">Root cause analysis</span><span class="tag">xUnit</span><span class="tag">Moq</span><span class="tag">Playwright</span></div>
+        </div>
+        <div class="card skill-group reveal" style="grid-column: 1 / -1">
+          <h3><span lang="es">Frontend y herramientas</span><span lang="en">Frontend & tools</span></h3>
+          <div class="tags"><span class="tag">React</span><span class="tag">JavaScript</span><span class="tag">Git</span><span class="tag">Cursor</span><span class="tag">Claude</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        class Particle {
-            constructor() {
-                this.reset();
-            }
+  <!-- ---------- Formación ---------- -->
+  <section id="education" style="padding-top: 24px">
+    <div class="container">
+      <div class="extra">
+        <div class="card reveal">
+          <h3><span lang="es">Certificación</span><span lang="en">Certification</span></h3>
+          <p><strong>AWS Certified Solutions Architect – Associate</strong>SAA-C03</p>
+          <span class="badge-progress"><span lang="es">En curso</span><span lang="en">In progress</span></span>
+        </div>
+        <div class="card reveal">
+          <h3><span lang="es">Educación</span><span lang="en">Education</span></h3>
+          <p>
+            <strong><span lang="es">Computación e Informática</span><span lang="en">Computing and Information Technology</span></strong>
+            CIBERTEC · Lima · 2016 — 2019
+          </p>
+        </div>
+        <div class="card reveal">
+          <h3><span lang="es">Idiomas</span><span lang="en">Languages</span></h3>
+          <p>
+            <strong><span lang="es">Español — Nativo</span><span lang="en">Spanish — Native</span></strong>
+            <span lang="es">Inglés — B2 (intermedio alto)</span><span lang="en">English — B2 (upper-intermediate)</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2 + 0.5;
-                this.speedX = (Math.random() - 0.5) * 0.5;
-                this.speedY = (Math.random() - 0.5) * 0.5;
-                this.opacity = Math.random() * 0.5 + 0.1;
-                this.pulse = Math.random() * Math.PI * 2;
-            }
+  <!-- ---------- Contacto ---------- -->
+  <section id="contact">
+    <div class="container">
+      <div class="card contact reveal">
+        <div class="eyebrow">// <span lang="es">contacto</span><span lang="en">contact</span></div>
+        <h2><span lang="es">¿Conversamos?</span><span lang="en">Let's talk</span></h2>
+        <p lang="es">Estoy abierto a oportunidades remotas como Backend Engineer (.NET). Escríbeme y te respondo pronto.</p>
+        <p lang="en">I'm open to remote Backend Engineer (.NET) opportunities. Drop me a line and I'll get back to you soon.</p>
+        <div class="cta">
+          <a class="btn primary" href="mailto:jks0101@hotmail.com">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            jks0101@hotmail.com
+          </a>
+          <a class="btn" href="https://www.linkedin.com/in/josue-tueros" target="_blank" rel="noopener">LinkedIn ↗</a>
+          <a class="btn" href="https://github.com/Jackss0" target="_blank" rel="noopener">GitHub ↗</a>
+        </div>
+      </div>
+    </div>
+  </section>
 
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                this.pulse += 0.02;
-                this.currentOpacity = this.opacity + Math.sin(this.pulse) * 0.15;
+  <footer>
+    <div class="container">© <span id="year"></span> Josué Tueros · <span lang="es">Hecho con HTML, CSS y café ☕</span><span lang="en">Built with HTML, CSS and coffee ☕</span></div>
+  </footer>
 
-                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
-                    this.reset();
-                }
-            }
+  <script>
+    (function () {
+      const root = document.documentElement;
+      root.classList.add("js");
+      const store = {
+        get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+        set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+      };
 
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 107, 138, ${this.currentOpacity})`;
-                ctx.fill();
-            }
-        }
+      // ---- Idioma ----
+      const roles = {
+        es: ["Ingeniero Backend", "C# / .NET", "Microservicios", "Event-Driven", "Kubernetes"],
+        en: ["Backend Engineer", "C# / .NET", "Microservices", "Event-Driven", "Kubernetes"]
+      };
+      const langBtn = document.getElementById("langToggle");
+      function setLang(lang) {
+        root.lang = lang;
+        langBtn.textContent = lang === "es" ? "EN" : "ES";
+        store.set("lang", lang);
+        restartTyping();
+      }
+      langBtn.addEventListener("click", () => setLang(root.lang === "es" ? "en" : "es"));
 
-        function startParticles() {
-            if (animationRunning) return;
-            animationRunning = true;
-            for (let i = 0; i < 80; i++) {
-                particles.push(new Particle());
-            }
-            animateParticles();
-        }
+      // ---- Tema ----
+      const themeBtn = document.getElementById("themeToggle");
+      const moon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+      const sun = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+      function setTheme(theme) {
+        root.dataset.theme = theme;
+        themeBtn.innerHTML = theme === "dark" ? sun : moon;
+        store.set("theme", theme);
+      }
+      themeBtn.addEventListener("click", () => setTheme(root.dataset.theme === "dark" ? "light" : "dark"));
 
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-            });
+      // ---- Efecto de escritura del rol ----
+      const typed = document.getElementById("typed");
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let timer = null;
+      function restartTyping() {
+        clearTimeout(timer);
+        const list = roles[root.lang];
+        if (reduced) { typed.textContent = list.join(" | "); return; }
+        let i = 0, pos = 0, deleting = false;
+        (function tick() {
+          const word = list[i];
+          pos += deleting ? -1 : 1;
+          typed.textContent = word.slice(0, pos);
+          let delay = deleting ? 40 : 80;
+          if (!deleting && pos === word.length) { deleting = true; delay = 1600; }
+          else if (deleting && pos === 0) { deleting = false; i = (i + 1) % list.length; delay = 300; }
+          timer = setTimeout(tick, delay);
+        })();
+      }
 
-            // Draw connections
-            for (let i = 0; i < particles.length; i++) {
-                for (let j = i + 1; j < particles.length; j++) {
-                    const dx = particles[i].x - particles[j].x;
-                    const dy = particles[i].y - particles[j].y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < 120) {
-                        ctx.beginPath();
-                        ctx.strokeStyle = `rgba(255, 107, 138, ${0.05 * (1 - dist / 120)})`;
-                        ctx.lineWidth = 0.5;
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.stroke();
-                    }
-                }
-            }
+      // ---- Aparición al hacer scroll ----
+      const io = "IntersectionObserver" in window
+        ? new IntersectionObserver((entries) => entries.forEach((e) => {
+            if (e.isIntersecting) { e.target.classList.add("visible"); io.unobserve(e.target); }
+          }), { threshold: 0.12 })
+        : null;
+      document.querySelectorAll(".reveal").forEach((el) => io ? io.observe(el) : el.classList.add("visible"));
 
-            requestAnimationFrame(animateParticles);
-        }
+      document.getElementById("year").textContent = new Date().getFullYear();
 
-        // ===== SCROLL ANIMATIONS =====
-        const observerOptions = {
-            threshold: 0.15,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const fadeObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.fade-in').forEach(el => {
-            fadeObserver.observe(el);
-        });
-
-        // Reason cards staggered animation
-        const cardObserver = new IntersectionObserver((entries) => {
-            entries.forEach((entry, index) => {
-                if (entry.isIntersecting) {
-                    const cards = document.querySelectorAll('.reason-card');
-                    cards.forEach((card, i) => {
-                        setTimeout(() => {
-                            card.classList.add('visible');
-                        }, i * 150);
-                    });
-                    cardObserver.disconnect();
-                }
-            });
-        }, { threshold: 0.1 });
-
-        const reasonsSection = document.querySelector('.reasons-grid');
-        if (reasonsSection) cardObserver.observe(reasonsSection);
-
-        // Timeline items animation
-        const timelineObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, { threshold: 0.2 });
-
-        document.querySelectorAll('.timeline-item').forEach(el => {
-            timelineObserver.observe(el);
-        });
-
-        // Letter lines animation
-        const letterObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const letterTextEl = entry.target;
-                    const lines = letterTextEl.querySelectorAll('.line');
-                    const dateEl = document.getElementById('letterDate');
-                    const signatureEl = document.getElementById('letterSignature');
-
-                    if (dateEl) dateEl.classList.add('show');
-
-                    lines.forEach((line, i) => {
-                        setTimeout(() => {
-                            line.classList.add('show');
-                        }, 150 + i * 180);
-                    });
-
-                    setTimeout(() => {
-                        if (signatureEl) signatureEl.classList.add('show');
-                    }, 150 + lines.length * 180 + 600);
-
-                    letterObserver.disconnect();
-                }
-            });
-        }, { threshold: 0.25 });
-
-        const letterText = document.getElementById('letterText');
-        if (letterText) letterObserver.observe(letterText);
-
-        // ===== "NO" BUTTON EVASION =====
-        const btnNo = document.getElementById('btnNo');
-        let noAttempts = 0;
-        const funnyTexts = [
-            "¿Estás segura? 🥺",
-            "Piénsalo otra vez...",
-            "¡No me hagas esto! 😢",
-            "Mi corazón se rompe 💔",
-            "¿Y si dices que sí? 🥹",
-            "¡Dale, di que sí! ✨",
-            "Última oportunidad... 🙏",
-        ];
-
-        btnNo.addEventListener('mouseenter', function(e) {
-            noAttempts++;
-            
-            if (noAttempts >= 2) {
-                const maxX = window.innerWidth - this.offsetWidth - 20;
-                const maxY = window.innerHeight - this.offsetHeight - 20;
-                const newX = Math.random() * maxX;
-                const newY = Math.random() * maxY;
-                
-                this.style.position = 'fixed';
-                this.style.left = newX + 'px';
-                this.style.top = newY + 'px';
-                this.style.zIndex = '100';
-            }
-
-            const textIndex = Math.min(noAttempts - 1, funnyTexts.length - 1);
-            this.textContent = funnyTexts[textIndex];
-            
-            // Make yes button bigger
-            const btnYes = document.getElementById('btnYes');
-            const scale = 1 + (noAttempts * 0.08);
-            btnYes.style.transform = `scale(${Math.min(scale, 1.5)})`;
-        });
-
-        btnNo.addEventListener('click', function() {
-            this.textContent = "¡Ese botón no funciona! 😜";
-            setTimeout(() => {
-                this.textContent = "Solo puedes decir Sí 💕";
-            }, 1500);
-        });
-
-        // ===== SAY YES =====
-        function sayYes() {
-            const celebration = document.getElementById('celebration');
-            celebration.classList.add('active');
-            createConfetti();
-            
-            // Trigger haptic-like animation
-            document.body.style.animation = 'none';
-        }
-
-        // ===== CONFETTI =====
-        function createConfetti() {
-            const container = document.getElementById('confettiContainer');
-            const colors = ['#ff2d55', '#ff6b8a', '#ffb6c1', '#ff85a2', '#ffd1dc', '#fff', '#ff4081', '#e91e63'];
-            const shapes = ['❤', '💕', '♡', '✨', '💖', '🌹'];
-            
-            for (let i = 0; i < 100; i++) {
-                setTimeout(() => {
-                    const piece = document.createElement('div');
-                    const isEmoji = Math.random() > 0.5;
-                    
-                    if (isEmoji) {
-                        piece.textContent = shapes[Math.floor(Math.random() * shapes.length)];
-                        piece.style.fontSize = (12 + Math.random() * 16) + 'px';
-                        piece.style.background = 'none';
-                        piece.style.width = 'auto';
-                        piece.style.height = 'auto';
-                    } else {
-                        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
-                        piece.style.width = (6 + Math.random() * 8) + 'px';
-                        piece.style.height = (12 + Math.random() * 15) + 'px';
-                        piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
-                    }
-                    
-                    piece.className = 'confetti-piece';
-                    piece.style.left = Math.random() * 100 + '%';
-                    piece.style.animationDuration = (2 + Math.random() * 3) + 's';
-                    piece.style.animationDelay = Math.random() * 0.5 + 's';
-                    container.appendChild(piece);
-
-                    setTimeout(() => piece.remove(), 6000);
-                }, i * 30);
-            }
-
-            // Keep confetti going
-            setInterval(() => {
-                for (let i = 0; i < 15; i++) {
-                    setTimeout(() => {
-                        const piece = document.createElement('div');
-                        const isEmoji = Math.random() > 0.5;
-                        
-                        if (isEmoji) {
-                            piece.textContent = shapes[Math.floor(Math.random() * shapes.length)];
-                            piece.style.fontSize = (12 + Math.random() * 16) + 'px';
-                        } else {
-                            piece.style.background = colors[Math.floor(Math.random() * colors.length)];
-                            piece.style.width = (6 + Math.random() * 8) + 'px';
-                            piece.style.height = (12 + Math.random() * 15) + 'px';
-                            piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
-                        }
-                        
-                        piece.className = 'confetti-piece';
-                        piece.style.left = Math.random() * 100 + '%';
-                        piece.style.animationDuration = (2 + Math.random() * 3) + 's';
-                        container.appendChild(piece);
-                        setTimeout(() => piece.remove(), 6000);
-                    }, i * 50);
-                }
-            }, 3000);
-        }
-
-        // ===== CURSOR HEART TRAIL =====
-        let lastHeartTime = 0;
-        document.addEventListener('mousemove', (e) => {
-            const now = Date.now();
-            if (now - lastHeartTime < 150) return;
-            lastHeartTime = now;
-
-            const heart = document.createElement('div');
-            heart.className = 'cursor-heart';
-            heart.textContent = ['♡', '❤', '💕', '✨'][Math.floor(Math.random() * 4)];
-            heart.style.left = e.clientX + 'px';
-            heart.style.top = e.clientY + 'px';
-            heart.style.setProperty('--dx', (Math.random() - 0.5) * 60 + 'px');
-            document.body.appendChild(heart);
-
-            setTimeout(() => heart.remove(), 1500);
-        });
-
-        // ===== SPARKLE ON CLICK =====
-        document.addEventListener('click', (e) => {
-            for (let i = 0; i < 6; i++) {
-                const sparkle = document.createElement('div');
-                sparkle.className = 'sparkle';
-                const angle = (Math.PI * 2 / 6) * i;
-                const distance = 20 + Math.random() * 20;
-                sparkle.style.left = (e.clientX + Math.cos(angle) * distance) + 'px';
-                sparkle.style.top = (e.clientY + Math.sin(angle) * distance) + 'px';
-                sparkle.style.background = ['#ff6b8a', '#ffb6c1', '#ff2d55', '#ffd1dc'][Math.floor(Math.random() * 4)];
-                sparkle.style.width = (4 + Math.random() * 4) + 'px';
-                sparkle.style.height = sparkle.style.width;
-                document.body.appendChild(sparkle);
-                setTimeout(() => sparkle.remove(), 800);
-            }
-        });
-
-        // ===== MUSIC =====
-        let musicPlaying = false;
-        const bgMusic = document.getElementById('bgMusic');
-        const musicToggle = document.getElementById('musicToggle');
-
-        // Attempt autoplay with Web Audio API as fallback
-        function toggleMusic() {
-            if (musicPlaying) {
-                bgMusic.pause();
-                musicToggle.classList.remove('playing');
-                musicPlaying = false;
-            } else {
-                bgMusic.volume = 0.3;
-                bgMusic.play().then(() => {
-                    musicToggle.classList.add('playing');
-                    musicPlaying = true;
-                }).catch(() => {
-                    // If no music file, create ambient sound with Web Audio API
-                    playAmbientTone();
-                    musicToggle.classList.add('playing');
-                    musicPlaying = true;
-                });
-            }
-        }
-
-        // Simple ambient romantic tone using Web Audio API
-        let audioCtx, ambientOsc, ambientGain;
-        function playAmbientTone() {
-            if (audioCtx) {
-                ambientGain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-                return;
-            }
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            
-            // Create a warm pad sound
-            const notes = [261.63, 329.63, 392.00, 493.88]; // C4, E4, G4, B4
-            notes.forEach((freq, i) => {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                
-                // Gentle pitch modulation
-                const lfo = audioCtx.createOscillator();
-                const lfoGain = audioCtx.createGain();
-                lfo.frequency.setValueAtTime(0.2 + i * 0.1, audioCtx.currentTime);
-                lfoGain.gain.setValueAtTime(1, audioCtx.currentTime);
-                lfo.connect(lfoGain);
-                lfoGain.connect(osc.frequency);
-                lfo.start();
-
-                if (i === 0) {
-                    ambientOsc = osc;
-                    ambientGain = gain;
-                }
-            });
-        }
-
-        // ===== KEYBOARD SHORTCUT =====
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                if (!envelopeOpened) {
-                    openEnvelope();
-                }
-            }
-        });
-    </script>
+      // ---- Init ----
+      const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+      setTheme(store.get("theme") || (prefersLight ? "light" : "dark"));
+      setLang(store.get("lang") || ((navigator.language || "es").toLowerCase().startsWith("es") ? "es" : "en"));
+    })();
+  </script>
 </body>
 </html>
